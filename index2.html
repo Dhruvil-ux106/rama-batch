@@ -1,0 +1,73 @@
+from reportlab.lib.pagesizes import landscape, A4
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer
+
+# File path for feasibility & viability PDF slide
+feasibility_pdf_path = "/mnt/data/Feasibility_Viability_Slide.pdf"
+
+# Create PDF
+doc = SimpleDocTemplate(feasibility_pdf_path, pagesize=landscape(A4))
+styles = getSampleStyleSheet()
+
+# Custom styles
+title_style = ParagraphStyle(
+    name="TitleStyle", fontSize=22, leading=28, alignment=1, spaceAfter=20, textColor=colors.HexColor("#1a202c")
+)
+header_style = ParagraphStyle(
+    name="HeaderStyle", fontSize=16, leading=20, textColor=colors.HexColor("#2f855a"), spaceAfter=10
+)
+list_style = ParagraphStyle(
+    name="ListStyle", fontSize=12, leading=16, leftIndent=15, textColor=colors.HexColor("#2d3748")
+)
+
+# -------- Slide Title --------
+slide_title = Paragraph("📌 Feasibility & Viability", title_style)
+
+# -------- Feasibility --------
+feasibility_header = Paragraph("✅ Feasibility", header_style)
+feasibility_points = [
+    "Technology Readiness: AI/ML models for pest detection, market price tracking, and weather predictions already exist and can be localized.",
+    "Low-Cost Access: Mobile penetration in rural India (~75%+) makes smartphone apps/chatbots practical.",
+    "Multilingual & Voice Interfaces: NLP and speech recognition tools support local languages and low-literate users.",
+    "Scalability: Cloud + Edge AI enables both online (real-time) and offline (low internet) advisory.",
+    "Partnerships Possible: Collaboration with government agri-departments, NGOs, and agri-tech startups ensures faster adoption.",
+]
+feasibility_list = [Paragraph(f"• {point}", list_style) for point in feasibility_points]
+
+# -------- Viability --------
+viability_header = Paragraph("🌾 Viability", header_style)
+viability_points = [
+    "Economic Impact: ICT-based advisories proven to increase crop yield by 20–30% (NABARD report).",
+    "Cost Savings: Optimized fertilizer & pesticide use reduces input costs.",
+    "Farmer Adoption: Trust built via explainable AI, feedback loops, and advisory in native languages.",
+    "Policy Support: Aligns with government’s Digital Agriculture Mission & PM-Kisan schemes.",
+    "Sustainability: Promotes eco-friendly practices, reduces overuse of chemicals, and supports food security.",
+    "Revenue Model: Possible through government subsidies, NGO partnerships, or freemium advisory services.",
+]
+viability_list = [Paragraph(f"• {point}", list_style) for point in viability_points]
+
+# Create two-column table
+table_data = [
+    [feasibility_header, viability_header],
+    [feasibility_list, viability_list]
+]
+
+table = Table(table_data, colWidths=[370, 370])
+table.setStyle(TableStyle([
+    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+    ("BACKGROUND", (0, 0), (0, 0), colors.HexColor("#ebf8ff")),
+    ("BACKGROUND", (1, 0), (1, 0), colors.HexColor("#f0fff4")),
+    ("BOX", (0, 0), (-1, -1), 1, colors.grey),
+    ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.grey),
+    ("LEFTPADDING", (0, 0), (-1, -1), 12),
+    ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+    ("TOPPADDING", (0, 0), (-1, -1), 10),
+    ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+]))
+
+# Build the slide
+elements = [slide_title, Spacer(1, 20), table]
+doc.build(elements)
+
+feasibility_pdf_path
